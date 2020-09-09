@@ -1,42 +1,46 @@
 var crypto = require("crypto");
 var CryptoJS = require("crypto-js");
 
+var publicKey =
+    "-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAiEPragkOAc+PM2TqG1Xqh/+mqWP0dJge+VfJ/H75nwCchOMNG297SgRKx7M3\nrvwxUfTw602rZ1LiwLV+h16/tGj5BxuQCkfAj+QFp3P4A+Kar8spo1mW2i7MCshhtzF72SHJ\n9K1yH67RmrCZdHpYdezs5yb1FtccUkUUhpbTX9PBaKMhxmecJE1jORRiSCdRl+c54NHVAbxf\nGrDDMRFw3PFv9cCmLSvP8/7mI3ClmDz+e9PsxFDItaynaMogrJDOm3D4i3CF2YgVmGBNBWfy\na/0t88eCWfM34JJ87ufQuzi6Fs9n3XOeWXN8DNc02YD9/Ua7lKFxaFF9iQfZkB3ckwIDAQAB\n-----END RSA PUBLIC KEY-----";
+
+var publicKeyData = `-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEAjjmjr3nS9gaKJLNwptvZekmbrPR6icrxiFjhYNYQQ0DMWJzxslSX0uBIDDlI
+6k23BbmhmxBoyCKZTXxzm8RMyMqy7Og3sCvmg7QGC7vHgrn7BG30kL3tqWS6uDa2VOEWD+k+
+iw1uipFRpuFX52FsO+Y9y2DzYsA0qQuSgr3Dp5h7VoQByYygR4MVtv6pU2MnDf5lPJY+3pEC
+FAwgluv8iszdqg9mtaszQj7anB0ywmpf0bRnrxuwb0HCIY8kXnpxiekSVnPXUxFQlkCb5maj
+ADuZZS3hh+6Q9OaDY8lWyHU8/kOjfPX6sYVNuGwJ+Vq6XoTCho+as847DJZX1a3YlwIDAQAB
+-----END RSA PUBLIC KEY-----
+`;
+
 var privateKey = `-----BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEAsTgZA2nD7Av7AulCQZUVKLdm5Hz/CvaNTrSG8+qiNL5S0ydURd3+TMKe
-od5NF/ZRlKyvrklZv/fVWLWLQd7/jCO2503Hnhxml0+y/mmB11Z0iABevv4Y6ZYny6X1RJc9
-5dUj0sbnp9RNoMUkI8YwZBzr6rCORLAwAPuALV+y1j6V0/daSjZy4JgPWBLDqAnHZxTGw7xg
-3wLLaRjsouv4nNXxJoP/MaFPZZaBZZi6R9MFihk3pG3RccxoIC9QZZGzgRNlsWNj+BueJeHQ
-rcaHkHeQ7PJWXVMVaZ1bnDG87CHAfS/IyMoY6jFSNZ9UgIMEA4Z5wtiAQzVwFd2v875cYwID
-AQABAoIBAQCYgk1MWaWoqnq+e5xwMer+mi5q7YLSnXDnzYXhvQcQWsWOP2dPpQZmaon3hQZV
-W73DM4UQeMFK6e3pJHqOGmlS4Z1SmuXxlEFZb9X7CTMa7KTmMWNX+/XWd0kSAWT8PSegdXcZ
-ueC71oFjnKRIQRN95EHGO2CDjhgRkF4zLgsKQW016TOyjv7AYQUzuNuBu9OUNJKBJxT8aDKM
-AZG5ZX1f/JMHGDkt/oYNR/vX1SnanfPzp5wRBPVOR9buiHBGiuIODj5BfUlNFXknR6gyFhsN
-VczfrZhayANhWDUFO66Iwvv+Qo38TOm9RMvLope5YTydySMwLwsNjytXQoqGbvNhAoGBANW2
-4jtLGpet4uZPri53erFrGFw0TYsaqoAqJIUppivYHUBAw8/B7sNxFlFWmLS1I0qWaL2SLLEc
-EEidZta0CbLO7OwDc+Kw/NdTlWaq44xI9SLjbsNpdCtC2bDMgm9XQotUghicWGlyIkzkJO8C
-Sg3DGXZ3mckcXm4CYMQuU33RAoGBANRIpZROR+3rjKacwwR3nxI1KN+Wmh+pPb2P2Ywx8chL
-l3JYhmNKNLfr6/RFQ80EV27xL48WxnS7zf4VVb8Kr/LR98s+VvJ8SsgyrFrJ0LmHVZLY1IKm
-qxUDLNq5UB6Tx7k4+KeWGKonI09pkeAigYFxU5gWmqh6iPx2v9CCb7/zAoGBANMijLqbZjg3
-mBSE38YUT+h7r2NYYMtumsdn2xCbpwllxvA1i73zEFmRncTZ0p+k3KrRkcTHZtPKr+OtbW3s
-DDDU8YfxmUl6JTDt6Im3hnqPkW7YVhNEWXpr3vkl8i7hfGJ+KND7lPUHxw9DzaE7F8Ik30EE
-w6/GERyJyOPICMAhAoGAXEiAgqpNJqbBbCS1uplt83JcpGZJ9f2Ss3d3cTS9EP+bhL/rG/rE
-VDghSP1bbiK3B6mdrSyPdWu3Lv+DWRuCRaL1f8tH7P4PXFx7BLS7IgwtLTtJlspxkR7iPutU
-YxaHOoQDxIbBjiaZeQpBuhgGCImFd5ZMAXXTWz0cQb6SafUCgYAg3fkscqXXVuBwxd4nJVHm
-ADBfLVTaKLha0j1O5ciS+5XA362+XHMhmliqEtBm73acHae+9TF5lUtD2KqTuJ0/lu82cySQ
-/AYOO4UlaW0ukESGG92gxj2wNsoYO3yJ/zYAExpvzTF/PmeQUtAjHiSKkBjV2DDL1bFamNt9
-7DH3dw==
+MIIEogIBAAKCAQEAjjmjr3nS9gaKJLNwptvZekmbrPR6icrxiFjhYNYQQ0DMWJzxslSX0uBI
+DDlI6k23BbmhmxBoyCKZTXxzm8RMyMqy7Og3sCvmg7QGC7vHgrn7BG30kL3tqWS6uDa2VOEW
+D+k+iw1uipFRpuFX52FsO+Y9y2DzYsA0qQuSgr3Dp5h7VoQByYygR4MVtv6pU2MnDf5lPJY+
+3pECFAwgluv8iszdqg9mtaszQj7anB0ywmpf0bRnrxuwb0HCIY8kXnpxiekSVnPXUxFQlkCb
+5majADuZZS3hh+6Q9OaDY8lWyHU8/kOjfPX6sYVNuGwJ+Vq6XoTCho+as847DJZX1a3YlwID
+AQABAoIBAGq4s6vj1TpJs/VQNLLwe6N4gnloxl6JS26NiykX2AIvKGdB9VdkhLx3EXkiryUq
+BbElFy/9QzMSS0jKnxF+XkO5XkPJCKiIeKPRPUwmrtHYbpRnUcIe0qxuanH6lBzi/aQY2JaN
+EKqn2sZHh6eXAhl8blgjOt6Z7an/hgPXE265KP3pMic6RvgTWs/9lPMkL8JmkZhQhuP/6UuB
+2Dy8EDXtNHjZF+3MGyuqkyuvgSt1r7AHB4uzc8KAoEo592sh1IgEK+9Sd5x/PgzeSz2OquJL
+gFqmxXud3W4/voMw/6Gc7lcNN1Z/T8+dJAFjM0UBK0M7ZRv174XMpx8dyf12ITECgYEA4u7G
+wogGuqQ8dZ9f999JFOMHr3OXQTfhREcnybY7yWzzyYJXVZS78PHaWfEwpblx1TOx4oFMfMzg
+8DEH5eT6nWeCtn/TtBX6vRZoYZyX/CriZpYsRjh+bxbppuzXMsHN8YfcSAq43jZuXo96nbtJ
+jL/vutt+yir5LVhv5vfdOKkCgYEAoHFDwaf6pixnAVvT8+57SaRKeYz+pBb6t6UiqcUfY2Dp
+IDNpykj4qncidtExVZrnELJEQoWDyNcCySCJ++yzKeYamxm63S5CCRxiDYfVXV72xBfindVC
+PnIdVzhhmxUArThdXDqE1WXHG2UlT0bmHDRQqB2zKWryC14YboxzDz8CgYB7MdkhHitZA3P2
+/tBghgzsk9tGOmAwfZ+DK4XEEXQfg1BNYr76rMXipck97pvUO/o6HdhB+KOHVMoAWv3IpigP
+b3QckwRgzVXTdOixpQs1UCqcOoZKkLzCnhO2FPk2itO8fV7ulTOLHs2H9ChCnLvu9vuz2xjX
+s8CWB16oaoLkEQKBgD/NixJiCK04jyXdLKaeueyJJwy7YzBB6yZIx0YYG+lbSpoBmBpXdnvj
+sJLrkeDnHuhm2/pQOh4OUw9En1rNwFnzJbV0P/lhQeV5ogybbeAZuaw1i2sUuak3nC9pPnd7
+nK9F8OqSYuyx8sIUMQgbu7qPm1ufo/Xej66xlqmvtLnlAoGAG6nJYWcIH+g1E1kazrqtBo2i
+AOLADbMqSOD04os4s2TqANW48QfrMhKU0QIBOyk8yrh9nOjkkEX3QkvuLd7pTKIspJf0x6mx
+r7k3Ys7i3uH2vQ+jsLk4Zy9pphvlCQtqDntqSpKjr+fFeFdzsSte18ht34ViwKhUdtRbdwcD
+SLA=
 -----END RSA PRIVATE KEY-----
 `;
 
-var publicKey = `-----BEGIN RSA PUBLIC KEY-----
-MIIBCgKCAQEAiEPragkOAc+PM2TqG1Xqh/+mqWP0dJge+VfJ/H75nwCchOMNG297SgRKx7M3
-rvwxUfTw602rZ1LiwLV+h16/tGj5BxuQCkfAj+QFp3P4A+Kar8spo1mW2i7MCshhtzF72SHJ
-9K1yH67RmrCZdHpYdezs5yb1FtccUkUUhpbTX9PBaKMhxmecJE1jORRiSCdRl+c54NHVAbxf
-GrDDMRFw3PFv9cCmLSvP8/7mI3ClmDz+e9PsxFDItaynaMogrJDOm3D4i3CF2YgVmGBNBWfy
-a/0t88eCWfM34JJ87ufQuzi6Fs9n3XOeWXN8DNc02YD9/Ua7lKFxaFF9iQfZkB3ckwIDAQAB
------END RSA PUBLIC KEY-----`;
-
-function encryptAES(l, n) {
+async function encryptAES(l, n) {
     return new Promise(function (u, t) {
         var r = (
                 Math.random().toString(36).substring(2, 15) +
@@ -66,7 +70,7 @@ function encryptAES(l, n) {
     });
 }
 
-function decryptAES(l, n) {
+async function decryptAES(l, n) {
     return new Promise((u, t) => {
         try {
             let t = Buffer.from(l.substring(0, 344), "base64");
@@ -96,64 +100,10 @@ function decryptAES(l, n) {
     });
 }
 
-function encrypt(l, n, u) {
-    return new Promise((t, r) => {
-        let i = n.slice(0, 245),
-            s = crypto.publicEncrypt(
-                {
-                    key: u,
-                    padding: crypto.constants.RSA_PKCS1_PADDING,
-                },
-                i
-            ),
-            c = n.slice(245);
-        t(
-            c.length > 0
-                ? encrypt(Buffer.concat([l, s]), c, u)
-                : Buffer.concat([l, s])
-        );
-    });
-}
-
-function decrypt(l, n, u) {
-    return new Promise((t, e) => {
-        let r = n.slice(0, 256),
-            i = crypto
-                .privateDecrypt(
-                    {
-                        key: u,
-                        padding: crypto.constants.RSA_PKCS1_PADDING,
-                    },
-                    r
-                )
-                .toString(),
-            s = n.slice(256);
-        t(s.length > 0 ? decrypt(l + i, s, u) : l + i);
-    });
-}
-
-function decrypt200(l, n, u) {
-    let t = 0;
-    return new Promise((r, i) => {
-        for (n.length == t && r(l); n.length > t; ) {
-            let i = crypto.privateDecrypt(
-                {
-                    key: u,
-                    padding: crypto.constants.RSA_PKCS1_PADDING,
-                },
-                n[t].data
-            );
-            (l = Buffer.concat([l, i])), t++, n.length == t && r(l.toString());
-        }
-    });
-}
-
 module.exports = {
     privateKey,
     publicKey,
+    publicKeyData,
     encryptAES,
     decryptAES,
-    encrypt,
-    decrypt,
-    decrypt200,
 };

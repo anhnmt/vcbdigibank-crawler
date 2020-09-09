@@ -3,6 +3,7 @@ const fs = require("fs");
 const userAgent = require("user-agents");
 const axiosCookieJarSupport = require("axios-cookiejar-support").default;
 const tough = require("tough-cookie");
+// Custom
 const { convertToText } = require("./image");
 
 const user_agent = new userAgent().toString();
@@ -117,14 +118,11 @@ function verifyCaptcha(captcha_id) {
                     var res = response.data;
                     // console.log(JSON.stringify(res));
 
+                    console.log(`\n- ${res.des}`);
+
                     if (res.code !== "00") {
-                        console.log(
-                            `- Xác nhận thất bại: ${JSON.stringify(res)}`
-                        );
                         console.log(`- Đang thử lại ...`);
                         await verifyCaptcha(captcha_id);
-                    } else {
-                        console.log(`- Xác minh captcha thành công!`);
                     }
                 })
                 .catch((error) => {
