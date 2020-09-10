@@ -14,9 +14,8 @@ const cookieJar = new tough.CookieJar();
 
 function checkLogin(username, password) {
     return new Promise(async (resolve, reject) => {
-        const captcha_id = await captcha.generateKey();
+        const captcha_id = await captcha.verifyCaptcha();
         console.log(`- Lấy captcha_id : ${captcha_id}`);
-        await captcha.verifyCaptcha(captcha_id);
 
         const socket_id = await socket.getSocket();
         console.log(`\n- Lấy socket_id : ${socket_id}`);

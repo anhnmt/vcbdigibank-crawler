@@ -108,35 +108,29 @@ function validCaptcha(captcha_id) {
     });
 }
 
-function verifyCaptcha(captcha_id) {
+function verifyCaptcha() {
     return new Promise(async (resolve, reject) => {
+        var captcha_id = await generateKey();
+
         await getCaptcha(captcha_id);
 
-        resolve(
-            await validCaptcha(captcha_id)
-                .then(async (response) => {
-                    var res = response.data;
-                    // console.log(JSON.stringify(res));
+        await validCaptcha(captcha_id)
+            .then(async (response) => {
+                var res = response.data;
+                // console.log(JSON.stringify(res));
 
-                    console.log(`\n- ${res.des}`);
+                console.log(`\n- ${res.des}`);
 
-                    if (res.code !== "00") {
-                        console.log(`- Đang thử lại ...`);
-                        await verifyCaptcha(captcha_id);
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        );
-
-        // Xoá file captcha
-        var captchaUrl = `${appRoot}/cache/${captcha_id}.png`;
-        if (fs.existsSync(captchaUrl)) {
-            fs.unlinkSync(captchaUrl, (err) => {
-                if (err) throw new Error(err);
+                if (res.code !== "00") {
+                    console.log(`- Đang thử lại ...`);
+                    await verifyCaptcha(captcha_id);
+                } else {
+                    resolve(captcha_id);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
             });
-        }
     });
 }
 
