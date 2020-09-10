@@ -41,7 +41,7 @@ SLA=
 `;
 
 async function encryptAES(l, n) {
-    return new Promise(function (u, t) {
+    return new Promise(function (resolve, reject) {
         var r = (
                 Math.random().toString(36).substring(2, 15) +
                 Math.random().toString(36).substring(2, 15) +
@@ -54,7 +54,7 @@ async function encryptAES(l, n) {
                 mode: CryptoJS.mode.ECB,
                 padding: CryptoJS.pad.Pkcs7,
             });
-        u(
+        resolve(
             crypto
                 .publicEncrypt(
                     {
@@ -71,7 +71,7 @@ async function encryptAES(l, n) {
 }
 
 async function decryptAES(l, n) {
-    return new Promise((u, t) => {
+    return new Promise((resolve, reject) => {
         try {
             let t = Buffer.from(l.substring(0, 344), "base64");
             Promise.resolve(!0)
@@ -92,10 +92,10 @@ async function decryptAES(l, n) {
                         mode: CryptoJS.mode.ECB,
                         padding: CryptoJS.pad.Pkcs7,
                     });
-                    u(e.toString(CryptoJS.enc.Utf8));
+                    resolve(e.toString(CryptoJS.enc.Utf8));
                 });
         } catch (r) {
-            t(r);
+            reject(r);
         }
     });
 }
