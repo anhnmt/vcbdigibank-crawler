@@ -14,17 +14,11 @@ const cookieJar = new tough.CookieJar();
 
 function checkLogin(username, password) {
     return new Promise(async (resolve, reject) => {
-        const captcha_id = await captcha.verifyCaptcha();
-        console.log(`- Lấy captcha_id : ${captcha_id}`);
-
-        const socket_id = await socket.getSocket();
-        console.log(`\n- Lấy socket_id : ${socket_id}`);
-
         var data_login = JSON.stringify({
             user_name: `${username}`,
             password: `${password}`,
-            socket_id: `${socket_id}`,
-            captcha_id: `${captcha_id}`,
+            socket_id: `${global.socket_id}`,
+            captcha_id: `${global.captcha_id}`,
             clientKey: crypt.publicKeyData,
             lang: "vi",
         });

@@ -50,14 +50,10 @@ function generateKey() {
 
 function getCaptcha(captcha_id) {
     return new Promise(async (resolve, reject) => {
-        const download = fs.createWriteStream(
-            `${appRoot}/cache/${captcha_id}.png`
-        );
-
         var config = {
             method: "get",
             url: `https://vcbdigibank.vietcombank.com.vn/w1/get-captcha/${captcha_id}`,
-            responseType: "stream",
+            responseType: "arraybuffer",
             headers: {
                 "Content-Type": "image/jpeg",
                 "User-Agent": user_agent,
@@ -66,21 +62,19 @@ function getCaptcha(captcha_id) {
             withCredentials: true,
         };
 
-        await axios(config).then(async (response) => {
-            await response.data.pipe(download);
-
-            download.on("finish", resolve);
-            download.on("error", reject);
-        });
+        await axios(config)
+            .then(function (response) {
+                resolve(
+                    Buffer.from(response.data, "binary").toString("base64")
+                );
+            })
+            .catch((err) => console.log(err));
     });
 }
 
-function validCaptcha(captcha_id) {
+function validCaptcha(captchaUrl) {
     return new Promise(async (resolve, reject) => {
-        const captcha_text = await convertToText(
-            `${appRoot}/cache/${captcha_id}.png`
-        );
-        // captcha_text = captcha_text.trim();
+        const captcha_text = await convertToText(captchaUrl);
         console.log(`- Bypass captcha thành công!`);
         console.log(`- Nội dung captcha_text: ${captcha_text}`);
 
@@ -110,11 +104,12 @@ function validCaptcha(captcha_id) {
 
 function verifyCaptcha() {
     return new Promise(async (resolve, reject) => {
-        var captcha_id = await generateKey();
+        global.captcha_id = await generateKey();
 
-        await getCaptcha(captcha_id);
+        var captchaUrl = await getCaptcha(global.captcha_id);
+        // console.log(captchaUrl);
 
-        await validCaptcha(captcha_id)
+        await validCaptcha(captchaUrl)
             .then(async (response) => {
                 var res = response.data;
                 // console.log(JSON.stringify(res));
@@ -123,9 +118,9 @@ function verifyCaptcha() {
 
                 if (res.code !== "00") {
                     console.log(`- Đang thử lại ...`);
-                    await verifyCaptcha(captcha_id);
+                    await verifyCaptcha();
                 } else {
-                    resolve(captcha_id);
+                    resolve(global.captcha_id);
                 }
             })
             .catch((error) => {

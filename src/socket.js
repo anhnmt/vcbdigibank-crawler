@@ -19,7 +19,9 @@ function getSocket() {
                 // console.log(response.data);
                 var res = response.data;
                 var socket_id = res.match(/\"sid\":\"(.*?)\"/)[1];
-                resolve(socket_id);
+
+                global.socket_id = socket_id;
+                resolve(global.socket_id);
             })
             .catch(function (error) {
                 console.log(error);
