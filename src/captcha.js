@@ -105,6 +105,7 @@ function validCaptcha(captchaUrl) {
 function verifyCaptcha() {
     return new Promise(async (resolve, reject) => {
         global.captcha_id = await generateKey();
+        console.log(`- Lấy captcha_id : ${global.captcha_id}`);
 
         var captchaUrl = await getCaptcha(global.captcha_id);
         // console.log(captchaUrl);
@@ -114,7 +115,7 @@ function verifyCaptcha() {
                 var res = response.data;
                 // console.log(JSON.stringify(res));
 
-                console.log(`\n- ${res.des}`);
+                console.log(`- ${res.des}`);
 
                 if (res.code !== "00") {
                     console.log(`- Đang thử lại ...`);

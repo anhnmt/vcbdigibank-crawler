@@ -4,8 +4,6 @@ const axiosCookieJarSupport = require("axios-cookiejar-support").default;
 const tough = require("tough-cookie");
 // Custom
 const crypt = require("./crypt");
-const captcha = require("./captcha");
-const socket = require("./socket");
 
 const user_agent = new userAgent().toString();
 
@@ -42,15 +40,12 @@ function checkLogin(username, password) {
         };
 
         await Promise.all([
-            // socket.verifySocket(socket_id),
             axios(config)
                 .then(async (response) => {
                     var res = response.data;
                     // console.log(JSON.stringify(res));
 
-                    // console.log(`\n- Nội dung login: ${JSON.stringify(res)}`);
-
-                    console.log(`\n- ${res.des}`);
+                    console.log(`- ${res.des}`);
 
                     if (res.code !== "00") {
                         console.log(`- Đang thử lại ...`);
@@ -115,7 +110,7 @@ function getTransaction(data_login) {
                 var res = response.data;
                 // console.log(JSON.stringify(res));
 
-                console.log(`\n- ${res.des}`);
+                console.log(`- ${res.des}`);
 
                 if (res.code !== "00") {
                     console.log(`- Đang thử lại ...`);

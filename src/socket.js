@@ -22,6 +22,7 @@ function getSocket() {
 
                 global.socket_id = socket_id;
                 resolve(global.socket_id);
+                console.log(`- Lấy socket_id : ${socket_id}`);
             })
             .catch(function (error) {
                 console.log(error);
@@ -46,7 +47,7 @@ function verifySocket(socket_id) {
                     // console.log(JSON.stringify(res));
 
                     console.log(
-                        `\n- Nội dung data_socket: ${JSON.stringify(res)}`
+                        `- Nội dung data_socket: ${JSON.stringify(res)}`
                     );
                 })
                 .catch((error) => {
