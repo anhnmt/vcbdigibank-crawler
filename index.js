@@ -12,11 +12,13 @@ const login = require("./src/login");
 
     await Promise.all([captcha.verifyCaptcha(), socket.getSocket()]);
 
+    console.log(`- Lấy data_login`);
     var data_login = await login.checkLogin("0962809194", "Son0972301962");
-    console.log(`- Lấy data_login : ${data_login}`);
+    // console.log(`- Lấy data_login : ${data_login}`);
     // data_login = JSON.parse(`${data_login}`);
 
-    const data_transaction = await login.getTransaction(data_login);
-    console.log(`- Lấy data_transaction : ${data_transaction}`);
+    console.log(`- Lấy data_transaction`);
+    const data_transaction = await login.checkTransaction(data_login);
+    console.log(`- Nội dung data_transaction : ${data_transaction}`);
     console.timeEnd();
 })();

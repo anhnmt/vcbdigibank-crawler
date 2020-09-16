@@ -4,6 +4,7 @@
         "axios-cookiejar-support": "^1.0.0",
         "crypto-browserify": "^3.12.0",
         "crypto-js": "^4.0.0",
+        "dayjs": "^1.8.35",
         "jimp": "^0.16.1",
         "tesseract.js": "^2.1.1",
         "tough-cookie": "^4.0.0",

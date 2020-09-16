@@ -2,6 +2,7 @@ const axios = require("axios");
 const userAgent = require("user-agents");
 const axiosCookieJarSupport = require("axios-cookiejar-support").default;
 const tough = require("tough-cookie");
+const dayjs = require("dayjs");
 // Custom
 const crypt = require("./crypt");
 
@@ -62,7 +63,10 @@ function checkLogin(username, password) {
 }
 
 function getTransaction(data_login) {
-    var data_user = JSON.parse(`${data_login}`);
+    const data_user = JSON.parse(`${data_login}`);
+    const now = dayjs();
+    const toDate = now.format("DD/MM/YYYY"); //toDate = today
+    const fromDate = now.subtract(7, "day").format("DD/MM/YYYY"); //fromDate = 7 days ago
 
     return new Promise(async (resolve, reject) => {
         // console.log(data_user.token);
@@ -76,8 +80,8 @@ function getTransaction(data_login) {
                 sessionId: `${data_user.user_info.session_id}`,
                 accountNo: `${data_user.user_info.defaultAccount}`,
                 accountType: "D",
-                fromDate: "03/09/2020",
-                toDate: "10/09/2020",
+                fromDate: fromDate,
+                toDate: toDate,
                 pageIndex: 0,
                 lengthInPage: 999999,
                 stmtDate: "",
@@ -125,16 +129,25 @@ function getTransaction(data_login) {
     });
 }
 
-function checkTransaction(data_transaction) {
-    var transactions = JSON.parse(`${data_transaction}`);
+async function checkTransaction(data_login) {
+    var transactions = await getTransaction(data_login);
+    var res = JSON.parse(`${transactions}`);
+    // console.log(`- ${res}`);
 
     return new Promise(async (resolve, reject) => {
-        // console.log(data_login.token);
+        console.log(`- ${res.des}`);
+
+        if (res.code !== "00") {
+            console.log(`- Đang thử lại ...`);
+            await checkTransaction(data_login);
+        } else {
+            resolve(transactions);
+        }
     });
 }
 
 module.exports = {
     checkLogin,
-    getTransaction,
+    // getTransaction,
     checkTransaction,
 };
